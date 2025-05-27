@@ -52,12 +52,12 @@ Ready to get your N8N superpower? Follow these simple steps:
 
 2.  **Clone the Repository:** Grab the script from GitHub.
     ```bash
-    git clone https://github.com/satriyabajuhitam/auto-n8n-complete.git
+    git clone https://github.com/satriyabajuhitam/auto-n8n-complete-v1.git
     ```
 
 3.  **Navigate to the Script Directory:**
     ```bash
-    cd auto-n8n-complete
+    cd auto-n8n-complete-v1
     ```
 
 4.  **Give the Script Permission to Run:**
