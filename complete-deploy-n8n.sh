@@ -3,7 +3,7 @@
 # Hi there, future automation wizard! 👋
 # Let's get your N8N up and running with all the cool stuff. ✨
 echo "================================================================="
-echo "               N8N, FFmpeg, yt-dlp, Puppeteer & SSL              "
+echo "               N8N, FFmpeg, yt-dlp, Puppeteer & Caddy            "
 echo "                     ~ by @satriyabajuhitam ~                    "
 echo "================================================================="
 
