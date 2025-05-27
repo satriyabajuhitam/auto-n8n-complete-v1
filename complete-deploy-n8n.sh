@@ -17,16 +17,16 @@ fi
 setup_swap() {
     echo ""
     echo "💨 Let's check your server's memory situation. We might need some extra 'breathing room' (swap space) to keep N8N running smoothly."
-
+    
     # Check if swap is already enabled
     if [ "$(swapon --show | wc -l)" -gt 1 ]; then # wc -l will be >1 if header + swap lines exist
         SWAP_SIZE_HUMAN=$(free -h | grep Swap | awk '{print $2}')
         echo "✅ Good news! Swap is already enabled with size ${SWAP_SIZE_HUMAN}. No need to mess with it."
         return
     fi
-
+    
     RAM_MB=$(free -m | grep Mem | awk '{print $2}')
-
+    
     local SWAP_SIZE_MB # Declare as local
     if [ "$RAM_MB" -le 2048 ]; then
         SWAP_SIZE_MB=$((RAM_MB * 2)) # Double RAM if it's 2GB or less
@@ -35,11 +35,11 @@ setup_swap() {
     else
         SWAP_SIZE_MB=4096 # Cap swap size at 4GB for larger RAM systems
     fi
-
+    
     local SWAP_GB=$(( (SWAP_SIZE_MB + 1023) / 1024 ))
-
+    
     echo "Setting up a ${SWAP_GB}GB (${SWAP_SIZE_MB}MB) swap file for you. This might take a moment... ⏳"
-
+    
     # Using fallocate for speed, with dd as a fallback
     if command -v fallocate &> /dev/null; then
         if ! fallocate -l ${SWAP_SIZE_MB}M /swapfile; then
@@ -56,27 +56,27 @@ setup_swap() {
             exit 1
         fi
     fi
-
+    
     chmod 600 /swapfile
     mkswap /swapfile
     swapon /swapfile
-
+    
     if ! grep -q "/swapfile" /etc/fstab; then
         echo '/swapfile none swap sw 0 0' >> /etc/fstab
     fi
-
+    
     # Adjusting swappiness and cache pressure for better performance
     sysctl vm.swappiness=10
     sysctl vm.vfs_cache_pressure=50
-
+    
     if ! grep -q "vm.swappiness" /etc/sysctl.conf; then
         echo "vm.swappiness=10" >> /etc/sysctl.conf
     fi
-
+    
     if ! grep -q "vm.vfs_cache_pressure" /etc/sysctl.conf; then
         echo "vm.vfs_cache_pressure=50" >> /etc/sysctl.conf
     fi
-
+    
     echo "🎉 Swap setup complete! Your server is ready for action with ${SWAP_GB}GB swap."
     echo "   Swappiness is set to 10 and vfs_cache_pressure to 50 for optimal performance. ⚙️"
 }
@@ -378,7 +378,8 @@ if [[ "$USE_LETSENCRYPT_SSL" =~ ^[Yy]$ ]]; then
         echo "Cool! Using Let's Encrypt with your email: ${LETSENCRYPT_EMAIL}."
         echo "⚠️ Important: Make sure ports 80 and 443 are open on your server's firewall for Let's Encrypt to work its magic! ✨"
     else
-        echo "No email? No problem, but I'll have to use an internal TLS certificate. Browsers might give you a privacy warning, just so you know! 😉"    fi
+        echo "No email? No problem, but I'll have to use an internal TLS certificate. Browsers might give you a privacy warning, just so you know! 😉"
+    fi
 else
     echo "Okay, we'll stick to an internal TLS certificate. Expect a privacy warning in your browser, but N8N will still work. 😉"
 fi
