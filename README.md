@@ -1,4 +1,4 @@
-## 🌟 Automated N8N Deployment with FFmpeg, yt-dlp, Puppeteer, and Auto-SSL! 🚀
+## 🌟 Automated N8N Deployment with FFmpeg, yt-dlp, Puppeteer, and Auto-SSL ( SQlite )! 🚀
 
 Tired of manual N8N installations? This script is your friendly helper to get N8N up and running on your VPS/server in a flash! It handles everything from Docker setup, custom N8N image building (with FFmpeg, yt-dlp, and Puppeteer), to automatic SSL with Caddy, plus daily backups and auto-updates. ✨
 
