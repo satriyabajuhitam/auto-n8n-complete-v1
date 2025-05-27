@@ -2,10 +2,10 @@
 
 # Hi there, future automation wizard! 👋
 # Let's get your N8N up and running with all the cool stuff. ✨
-echo "================================================================="
-echo "               N8N, FFmpeg, yt-dlp, Puppeteer & Caddy            "
-echo "                     ~ by @satriyabajuhitam ~                    "
-echo "================================================================="
+echo "============================================================================"
+echo "                    n8n, ffmpeg, yt-dlp, puppeteer & caddy                  "
+echo "                          ~ by @satriyabajuhitam ~                          "
+echo "============================================================================"
 
 # First things first: Are you root?
 if [[ $EUID -ne 0 ]]; then
@@ -663,6 +663,7 @@ echo "  - Backup log: '$N8N_DIR/files/backup_full/backup.log' 📝"
 echo "► YouTube video download directory: $N8N_DIR/files/youtube_data/ 🎬"
 echo "► Puppeteer is all set up inside your N8N container for web scraping magic! ✨"
 echo ""
-echo "A little note: If you want to use 'yt-dlp' directly from your server's command line, you might need to manually add '~/.local/bin' to your PATH environment variable. Just a heads-up! 😉"
+echo "A little note: If you want to use 'yt-dlp' directly from your server's command line,"
+echo "you might need to manually add '~/.local/bin' to your PATH environment variable. Just a heads-up! 😉"
 echo "======================================================================"
 echo "Enjoy your N8N journey! If you have any more questions, just ask! 😊"
