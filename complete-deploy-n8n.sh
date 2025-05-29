@@ -118,16 +118,32 @@ done
 # Let's make sure your domain knows where your server lives! 🗺️
 check_domain() {
     local domain=$1
-    local server_ip=$(hostname -I | awk '{print $1}' || curl -s --max-time 10 https://api.ipify.org) # Try local IP first, then external with timeout
+    echo "Checking domain '$domain' for proper DNS configuration..."
+
+    # Try to get the server's public IP using multiple methods
+    local server_ip
+    server_ip=$(curl -s --max-time 10 https://api.ipify.org || curl -s --max-time 10 https://ifconfig.me)
     if [ -z "$server_ip" ]; then
         echo "❌ Oops! I couldn't figure out your server's public IP address. Are you connected to the internet?"
         return 1
     fi
-    local domain_ip=$(dig +short "$domain" A)
+    echo "Server public IP: $server_ip"
 
-    if [ "$domain_ip" = "$server_ip" ]; then
+    # Resolve the domain's IP using dig, with fallback to nslookup
+    local domain_ip
+    domain_ip=$(dig +short "$domain" A 2>/dev/null || nslookup "$domain" | grep -A1 'Name:' | grep 'Address' | awk '{print $2}' | head -n 1)
+    if [ -z "$domain_ip" ]; then
+        echo "❌ Failed to resolve the IP for '$domain'. Please check your DNS settings or ensure 'dnsutils' is installed."
+        return 1
+    fi
+    echo "Domain '$domain' resolves to: $domain_ip"
+
+    # Handle multiple IPs (e.g., CDN) by checking if server_ip is in domain_ip
+    if echo "$domain_ip" | grep -q "$server_ip"; then
+        echo "✅ Domain '$domain' correctly points to this server's IP ($server_ip)."
         return 0
     else
+        echo "❌ Domain '$domain' does not point to this server's IP ($server_ip). Resolved IPs: $domain_ip"
         return 1
     fi
 }
@@ -135,11 +151,19 @@ check_domain() {
 # Time to grab some essential tools! Think of them as my trusty sidekicks. 🛠️
 install_base_dependencies() {
     echo ""
-    echo "Updating our tools list and installing a few must-haves... 🔄"
+    echo "Updating the APT repository to use archive.ubuntu.com... 🔄"
+    cp /etc/apt/sources.list /etc/apt/sources.list.bak
+    sed -i 's|azure.archive.ubuntu.com/ubuntu|archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list
+    echo "Updating package lists..."
     apt-get update -y > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "❌ Failed to update package lists. Please check your internet connection or APT sources."
+        exit 1
+    fi
+    echo "Installing essential tools... 🔧"
     apt-get install -y dnsutils curl cron jq tar gzip python3-full python3-venv pipx net-tools bc
     if [ $? -ne 0 ]; then
-        echo "❌ Oh no! I hit a snag installing some basic packages. Could be your internet, or perhaps apt sources. Please check and try again!"
+        echo "❌ Oh no! I hit a snag installing some basic packages. Please check your internet or APT sources."
         exit 1
     fi
     echo "✅ Essential tools are all set!"
